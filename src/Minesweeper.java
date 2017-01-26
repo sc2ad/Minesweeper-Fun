@@ -45,30 +45,46 @@ public class Minesweeper {
 		}
 		return board;
 	}
-	public static void main(String[] args) {
-		yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
-		xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
-		mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
+	public static void resetBoard() {
 		board = new int[yLength][xLength];
 		int[][][] temp = fill(board, mineCount);
 		board = calcMineNums(temp[0], temp[1]);
+	}
+	public static void main(String[] args) {
+//		yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
+//		xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
+//		mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
+		
+		yLength = 5;
+		xLength = 5;
+		mineCount = 7;
+		
+		resetBoard();
 		int[][] dispBoard = new int[yLength][xLength];
-		print(dispBoard);
-		clear(1, dispBoard, 0,0);
+		//print(dispBoard);
+		initClear(dispBoard, 0,0);
+//		clear(1, dispBoard, 0,0);
 		print(dispBoard);
 		// Make window
 		// handle game
 	}
+	public static void initClear(int[][] dispBoard, int... pos) {
+		while (board[pos[1]][pos[0]] != 0 || board[pos[1]][pos[0]] == -1) {
+			resetBoard();
+		}
+		clear(1, dispBoard, pos);
+	}
 	public static void clear(int tiles, int[][] dispBoard, int... pos) {
+		
 		for (int i = -tiles/2; i <= tiles/2; i++) {
 			for (int j = -tiles/2; j <= tiles/2; j++) {
 				try {
-					if (dispBoard[pos[1]-i][pos[0]-j] == 11 || dispBoard[pos[1]-i][pos[0]-j] == 12) {
+					if (dispBoard[pos[1]-i][pos[0]-j] == 10 || dispBoard[pos[1]-i][pos[0]-j] == 11 || dispBoard[pos[1]-i][pos[0]-j] == 12) {
 						continue;
 					}
 					else if (board[pos[1]-i][pos[0]-j] == 0 && dispBoard[pos[1]-i][pos[0]-j] != 10) {
 						dispBoard[pos[1]-i][pos[0]-j] = 10;
-						clear(9, dispBoard, pos[0]-j, pos[1]-i);
+						clear(3, dispBoard, pos[0]-j, pos[1]-i);
 						continue;
 					}
 					else if (board[pos[1]-i][pos[0]-j] == -1) {
