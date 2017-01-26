@@ -6,13 +6,21 @@ public class Minesweeper {
 	public static final int[] WINDOW_SIZE = {500,500};
 	
 	public static int[][] board;
+	public static int[][] dispBoard;
 	
 	public static int xLength;
 	public static int yLength;
 	public static int mineCount;
 	
-	public static int[][][] fill(int[][] board, int numMines) {
-		int[][] minePos = new int[numMines][2];
+	public static int[][] minePos;
+	
+	public static boolean firstPress = true;
+	public static boolean gameOver = false;
+	
+	public static DrawMinesweeper dm;
+	
+	public static int[][] fill(int[][] board, int numMines) {
+		minePos = new int[numMines][2];
 		for (int i = 0; i < numMines; i++) {
 			int y,x;
 			do {
@@ -23,11 +31,11 @@ public class Minesweeper {
 			int[] t = {x,y};
 			minePos[i] = t;
 		}
-		int [][][] out = {board, minePos};
+		int [][] out = board;
 		return out;
 	}
 	@SuppressWarnings("unused")
-	public static int[][] calcMineNums(int[][] board, int[][] minePos) {
+	public static int[][] calcMineNums(int[][] board) {
 		// 1 + 1/2 * MINE_NUMBER_SIZE
 		for (int[] xy : minePos) {
 			if (MINE_NUMBER_SIZE % 2 == 0) throw new IllegalArgumentException("MINE_NUMBER_SIZE must be an odd number!");
@@ -47,35 +55,62 @@ public class Minesweeper {
 	}
 	public static void resetBoard() {
 		board = new int[yLength][xLength];
-		int[][][] temp = fill(board, mineCount);
-		board = calcMineNums(temp[0], temp[1]);
+		int[][] temp = fill(board, mineCount);
+		board = calcMineNums(temp);
+		dispBoard = new int[yLength][xLength];
+		gameOver = false;
+		firstPress = true;
 	}
-	public static void main(String[] args) {
-//		yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
-//		xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
-//		mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
+	public static void run() {
+		yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
+		xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
+		mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
 		
-		yLength = 5;
-		xLength = 5;
-		mineCount = 7;
+//		yLength = 5;
+//		xLength = 5;
+//		mineCount = 7;
 		
 		resetBoard();
-		int[][] dispBoard = new int[yLength][xLength];
-		//print(dispBoard);
-		initClear(dispBoard, 0,0);
-//		clear(1, dispBoard, 0,0);
-		print(dispBoard);
-		// Make window
-		// handle game
+		dm = new DrawMinesweeper(500,500);
+		dm.addMouseListener(new MinesweeperMouse());
+		
 	}
-	public static void initClear(int[][] dispBoard, int... pos) {
-		while (board[pos[1]][pos[0]] != 0 || board[pos[1]][pos[0]] == -1) {
+	public static void initClear(int... pos) {
+		while (board[pos[1]][pos[0]] != 0) {
 			resetBoard();
 		}
-		clear(1, dispBoard, pos);
+		clear(1, pos);
+		firstPress = false;
 	}
-	public static void clear(int tiles, int[][] dispBoard, int... pos) {
-		
+	public static void lose() {
+		for (int i = 0; i < minePos.length; i++) {
+			dispBoard[minePos[i][1]][minePos[i][0]] = -1;
+		}
+		int[][] q = minePos;
+		gameOver = true;
+	}
+	public static void specificClear(int tiles, int...pos) {
+		if (dispBoard[pos[1]][pos[0]] < 10 && dispBoard[pos[1]][pos[0]] > 0) {
+			int count = 0;
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					try {
+						if (dispBoard[pos[1]+i][pos[0]+j] == 11) {
+							count++;
+						}
+					} catch (ArrayIndexOutOfBoundsException e) {
+						continue;
+					}
+				}
+			}
+			if (count >= board[pos[1]][pos[0]]) {
+				clear(3, pos);
+			}
+		} else {
+			clear(tiles, pos);
+		}
+	}
+	public static void clear(int tiles, int... pos) {
 		for (int i = -tiles/2; i <= tiles/2; i++) {
 			for (int j = -tiles/2; j <= tiles/2; j++) {
 				try {
@@ -84,11 +119,13 @@ public class Minesweeper {
 					}
 					else if (board[pos[1]-i][pos[0]-j] == 0 && dispBoard[pos[1]-i][pos[0]-j] != 10) {
 						dispBoard[pos[1]-i][pos[0]-j] = 10;
-						clear(3, dispBoard, pos[0]-j, pos[1]-i);
+						clear(3, pos[0]-j, pos[1]-i);
 						continue;
 					}
 					else if (board[pos[1]-i][pos[0]-j] == -1) {
 						// Game ends, player dead.
+						lose();
+						dispBoard[pos[1]-i][pos[0]-j] = -2;
 						return;
 					}
 					dispBoard[pos[1]-i][pos[0]-j] = board[pos[1]-i][pos[0]-j];
@@ -97,6 +134,7 @@ public class Minesweeper {
 				}
 			}
 		}
+		
 	}
 	public static void print(int[][] dBoard) {
 		for (int k = 0; k < board.length; k++) {
@@ -115,6 +153,22 @@ public class Minesweeper {
 			}
 			System.out.println();
 		}
+	}
+	public static void question(int...pos) {
+		if (dispBoard[pos[1]][pos[0]] == 0) {
+			dispBoard[pos[1]][pos[0]] = 12;
+		} else if (dispBoard[pos[1]][pos[0]] == 12) {
+			dispBoard[pos[1]][pos[0]] = 0;
+		}
+	}
+	
+	public static void flag(int... pos) {
+		if (dispBoard[pos[1]][pos[0]] == 0 || dispBoard[pos[1]][pos[0]] == 12) {
+			dispBoard[pos[1]][pos[0]] = 11;
+		} else if (dispBoard[pos[1]][pos[0]] == 11) {
+			dispBoard[pos[1]][pos[0]] = 0;
+		}
+		
 	}
 	public static boolean checkWin(int[][] dispBoard) {
 		int count = 0;
