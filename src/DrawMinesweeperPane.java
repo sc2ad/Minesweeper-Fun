@@ -13,6 +13,8 @@ public class DrawMinesweeperPane extends JPanel {
 	public static int height;
 	public static int mx = 0;
 	public static int my = 0;
+	final static int textXDisp = -3;
+	final static int textYDisp = 5;
 	double scaling = 1.0; // Default scaling
 		
 	public DrawMinesweeperPane(int w, int h) {
@@ -117,7 +119,7 @@ public class DrawMinesweeperPane extends JPanel {
     					break;
     				default: break;
     				}
-    				g.drawString(String.valueOf(item), x+width/Minesweeper.dispBoard[i].length/2, y+height/Minesweeper.dispBoard.length/2);
+    				g.drawString(String.valueOf(item), x+width/Minesweeper.dispBoard[i].length/2+textXDisp, y+height/Minesweeper.dispBoard.length/2+textYDisp);
     			}
     			
     		}
