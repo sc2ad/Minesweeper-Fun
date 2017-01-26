@@ -19,7 +19,7 @@ public class DrawMinesweeper extends JFrame {
         final int xChange = 16;
         final int yChange = 39;
         
-        setSize(x+xChange, y+yChange); // Sets the size to be a bit bigger than needed
+        setSize(x+xChange+(int)(x/(9/3.0)), y+yChange); // Sets the size to be a bit bigger than needed
 
         setVisible(true);  // Makes sure the window is visible
         

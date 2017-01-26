@@ -18,6 +18,7 @@ public class Minesweeper {
 	public static boolean gameOver = false;
 	
 	public static DrawMinesweeper dm;
+	public static int flagCountLeft;
 	
 	public static int[][] fill(int[][] board, int numMines) {
 		minePos = new int[numMines][2];
@@ -56,6 +57,7 @@ public class Minesweeper {
 	public static void resetBoard() {
 		board = new int[yLength][xLength];
 		int[][] temp = fill(board, mineCount);
+		flagCountLeft = mineCount;
 		board = calcMineNums(temp);
 		dispBoard = new int[yLength][xLength];
 		gameOver = false;
@@ -71,7 +73,7 @@ public class Minesweeper {
 //		mineCount = 7;
 		
 		resetBoard();
-		dm = new DrawMinesweeper(500,500);
+		dm = new DrawMinesweeper(1000,600);
 		dm.addMouseListener(new MinesweeperMouse());
 		
 	}
@@ -165,20 +167,30 @@ public class Minesweeper {
 	public static void flag(int... pos) {
 		if (dispBoard[pos[1]][pos[0]] == 0 || dispBoard[pos[1]][pos[0]] == 12) {
 			dispBoard[pos[1]][pos[0]] = 11;
+			flagCountLeft--;
 		} else if (dispBoard[pos[1]][pos[0]] == 11) {
 			dispBoard[pos[1]][pos[0]] = 0;
+			flagCountLeft++;
 		}
 		
 	}
 	public static boolean checkWin(int[][] dispBoard) {
-		int count = 0;
-		for (int[] xy : dispBoard) {
-			for (int i : xy) {
-				if (i != -1 && i != 11 && i != 12) { // Makes sure that it isn't a mine or a flag or a question
-					count ++;
-				}
+		int countMine = 0;
+		for (int[] xy : minePos) {
+			int i = dispBoard[xy[1]][xy[0]];
+			if (i == 11) { // Makes sure that it isn't a mine or a flag or a question
+				countMine ++;
 			}
 		}
-		return count == xLength * yLength - mineCount;
+		int countTile = 0;
+		for (int[] xy : dispBoard) {
+			for (int i : xy) {
+				if (i == 11 || i == 12 || i == 0) {
+					continue;
+				}
+				countTile++;
+			}
+		}
+		return countMine == mineCount && countTile == xLength*yLength-mineCount;
 	}
 }

@@ -45,9 +45,13 @@ public class DrawMinesweeperPane extends JPanel {
         g.fillRect(0, 0, getWidth(), getHeight());
         // Makes the sky BLACK
         paintBkg(g);
-        g.setColor(Color.RED);
-        g.drawString(mx+", "+my, width, height/2);
+//        g.setColor(Color.RED);
+//        g.drawString(mx+", "+my, width, height/2);
+        g.setColor(Color.CYAN);
+        g.drawString("Mines Left: ", width+width/10-15, height/2-height/5);
+        g.drawString(String.valueOf(Minesweeper.flagCountLeft), width+width/10, height/2);
         if (Minesweeper.checkWin(Minesweeper.dispBoard)) {
+        	g.setColor(Color.RED);
         	g.setFont(Font.decode("arial BOLD"));
 			g.drawString("YOU WIN!", width/2, height/2);
 			Minesweeper.gameOver = true;
@@ -61,15 +65,22 @@ public class DrawMinesweeperPane extends JPanel {
     			int item = Minesweeper.dispBoard[i][j];
     			g.setColor(Color.WHITE);
     			if (item <= 10 && item > 0) {
-    				g.setColor(Color.GRAY);
-    			} else if (item == 11) {
+    				g.setColor(Color.LIGHT_GRAY);
+    			}
+    			switch (item) {
+    			case 11: 
     				g.setColor(Color.RED);
-    			} else if (item == 12) {
+    				break;
+    			case 12: 
     				g.setColor(Color.BLUE);
-    			} else if (item == -2) {
+    				break;
+    			case -2: 
     				g.setColor(Color.PINK);
-    			} else if (item == -1) {
+    				break;
+    			case -1:
     				g.setColor(Color.DARK_GRAY);
+    				break;
+    			default: break;
     			}
     			int x = j * width / Minesweeper.dispBoard[i].length;
     			int y = i * height / Minesweeper.dispBoard.length;
@@ -79,8 +90,33 @@ public class DrawMinesweeperPane extends JPanel {
     			g.drawRect(x, y, width/Minesweeper.dispBoard[i].length, height/Minesweeper.dispBoard.length);
     			
     			if (item < 9 && item > 0) {
-    				g.setColor(Color.BLACK);
-    				//TODO: Add color severity for mines
+    				switch (item) {
+    				case 8:
+    					g.setColor(Color.BLACK);
+    					break;
+    				case 7:
+    					g.setColor(Color.DARK_GRAY);
+    					break;
+    				case 6:
+    					g.setColor(Color.GRAY);
+    					break;
+    				case 5:
+    					g.setColor(Color.MAGENTA);
+    					break;
+    				case 4:
+    					g.setColor(Color.ORANGE);
+    					break;
+    				case 3:
+    					g.setColor(Color.RED);
+    					break;
+    				case 2:
+    					g.setColor(Color.GREEN);
+    					break;
+    				case 1:
+    					g.setColor(Color.BLUE);
+    					break;
+    				default: break;
+    				}
     				g.drawString(String.valueOf(item), x+width/Minesweeper.dispBoard[i].length/2, y+height/Minesweeper.dispBoard.length/2);
     			}
     			
