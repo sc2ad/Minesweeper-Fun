@@ -18,19 +18,26 @@ public class MinesweeperMouse implements MouseListener {
 		final int mouseXFix = -8;
 		final int mouseYFix = -30;
 		int[] p = DrawMinesweeperPane.getIndexFromPos(e.getX()+mouseXFix, e.getY()+mouseYFix);
-		if (Minesweeper.gameOver) Minesweeper.resetBoard();
-		else if (e.getButton() == 3) {
-			// Flag
-			Minesweeper.flag(p);
-		}
-		else if (e.getButton() == 1) {
-			// Clear
-			if (Minesweeper.firstPress) Minesweeper.initClear(p);
-			else Minesweeper.specificClear(1, p);
-		}
-		else if (e.getButton() == 2) {
-			// Question
-			Minesweeper.question(p);
+		try {
+			if (Minesweeper.gameOver) Minesweeper.resetBoard();
+			else if (e.getButton() == 3) {
+				// Flag
+				Minesweeper.flag(p);
+			}
+			else if (e.getButton() == 1) {
+				// Clear
+				if (Minesweeper.firstPress) Minesweeper.initClear(p);
+				else Minesweeper.specificClear(1, p);
+			}
+			else if (e.getButton() == 2) {
+				// Question
+				Minesweeper.question(p);
+			}
+		} catch (ArrayIndexOutOfBoundsException e2) {
+			Minesweeper.lose();
+			Minesweeper.dm.setVisible(false);
+			Minesweeper.dm = null;
+			Minesweeper.run();
 		}
 		
 

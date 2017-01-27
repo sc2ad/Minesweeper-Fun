@@ -3,7 +3,7 @@ import javax.swing.JOptionPane;
 public class Minesweeper {
 	
 	public static final int MINE_NUMBER_SIZE = 3; // Must be odd.
-	public static final int[] WINDOW_SIZE = {500,500};
+	public static final int[] WINDOW_SIZE = {1000, 600};
 	
 	public static int[][] board;
 	public static int[][] dispBoard;
@@ -64,16 +64,24 @@ public class Minesweeper {
 		firstPress = true;
 	}
 	public static void run() {
-		yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
-		xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
-		mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
-		
+		try {
+			yLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of rows for minesweeper..."));
+			xLength = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of coloumns for minesweeper..."));
+			mineCount = Integer.parseInt(JOptionPane.showInputDialog(null, "Please enter the number of mines for minesweeper..."));
+		} catch (NumberFormatException e) {
+			if (JOptionPane.showConfirmDialog(null, "Do you want to quit?") == 0) {
+				return;
+			}
+			run();
+			return;
+			
+		}
 //		yLength = 5;
 //		xLength = 5;
 //		mineCount = 7;
 		
 		resetBoard();
-		dm = new DrawMinesweeper(1000,600);
+		dm = new DrawMinesweeper(WINDOW_SIZE[0], WINDOW_SIZE[1]);
 		dm.addMouseListener(new MinesweeperMouse());
 		
 	}
@@ -88,7 +96,6 @@ public class Minesweeper {
 		for (int i = 0; i < minePos.length; i++) {
 			dispBoard[minePos[i][1]][minePos[i][0]] = -1;
 		}
-		int[][] q = minePos;
 		gameOver = true;
 	}
 	public static void specificClear(int tiles, int...pos) {

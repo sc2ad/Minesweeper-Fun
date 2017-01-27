@@ -14,7 +14,7 @@ public class DrawMinesweeperPane extends JPanel {
 	public static int mx = 0;
 	public static int my = 0;
 	final static int textXDisp = -3;
-	final static int textYDisp = 5;
+	final static int textYDisp = -5;
 	double scaling = 1.0; // Default scaling
 		
 	public DrawMinesweeperPane(int w, int h) {
@@ -25,7 +25,7 @@ public class DrawMinesweeperPane extends JPanel {
 			public void run() {
                 do {
                     repaint();
-                    try {Thread.sleep(10);} catch (Exception ex) {}
+                    try {Thread.sleep(10);} catch (IllegalArgumentException e) {break;} catch (Exception ex) {} 
                 } while (true);
             }
 		});
@@ -39,6 +39,9 @@ public class DrawMinesweeperPane extends JPanel {
 		int[] out = {x,y};
 		return out;
 	}
+	public void kill() {
+		throw new IllegalArgumentException("nah");
+	}
 	
     public void paintComponent(Graphics g) {
     	//draw on g here e.g.
@@ -50,11 +53,12 @@ public class DrawMinesweeperPane extends JPanel {
 //        g.setColor(Color.RED);
 //        g.drawString(mx+", "+my, width, height/2);
         g.setColor(Color.CYAN);
+		g.setFont(new Font("Arial", Font.PLAIN, 25));
         g.drawString("Mines Left: ", width+width/10-15, height/2-height/5);
         g.drawString(String.valueOf(Minesweeper.flagCountLeft), width+width/10, height/2);
         if (Minesweeper.checkWin(Minesweeper.dispBoard)) {
         	g.setColor(Color.RED);
-        	g.setFont(Font.decode("arial BOLD"));
+			g.setFont(new Font("Arial", Font.BOLD, height/5+textYDisp));
 			g.drawString("YOU WIN!", width/2, height/2);
 			Minesweeper.gameOver = true;
 			//Minesweeper.resetBoard();
@@ -119,7 +123,8 @@ public class DrawMinesweeperPane extends JPanel {
     					break;
     				default: break;
     				}
-    				g.drawString(String.valueOf(item), x+width/Minesweeper.dispBoard[i].length/2+textXDisp, y+height/Minesweeper.dispBoard.length/2+textYDisp);
+    				g.setFont(new Font("Arial", Font.PLAIN, height/Minesweeper.dispBoard.length/2));
+    				g.drawString(String.valueOf(item), x+width/Minesweeper.dispBoard[i].length/2-g.getFontMetrics().charWidth(String.valueOf(item).charAt(0))/2, y+height/Minesweeper.dispBoard.length/2+g.getFontMetrics().getHeight()/2);
     			}
     			
     		}
