@@ -15,9 +15,7 @@ public class MinesweeperMouse implements MouseListener {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		final int mouseXFix = -8;
-		final int mouseYFix = -30;
-		int[] p = DrawMinesweeperPane.getIndexFromPos(e.getX()+mouseXFix, e.getY()+mouseYFix);
+		int[] p = DrawMinesweeperPane.getIndexFromPos(e.getX()+Constants.mouseXFix, e.getY()+Constants.mouseYFix);
 		try {
 			if (Minesweeper.gameOver) Minesweeper.resetBoard();
 			else if (e.getButton() == 3) {

@@ -13,8 +13,7 @@ public class DrawMinesweeperPane extends JPanel {
 	public static int height;
 	public static int mx = 0;
 	public static int my = 0;
-	final static int textXDisp = -3;
-	final static int textYDisp = -5;
+	
 	double scaling = 1.0; // Default scaling
 		
 	public DrawMinesweeperPane(int w, int h) {
@@ -58,7 +57,7 @@ public class DrawMinesweeperPane extends JPanel {
         g.drawString(String.valueOf(Minesweeper.flagCountLeft), width+width/10, height/2);
         if (Minesweeper.checkWin(Minesweeper.dispBoard)) {
         	g.setColor(Color.RED);
-			g.setFont(new Font("Arial", Font.BOLD, height/5+textYDisp));
+			g.setFont(new Font("Arial", Font.BOLD, height/5+Constants.textYDisp));
 			g.drawString("YOU WIN!", width/2, height/2);
 			Minesweeper.gameOver = true;
 			//Minesweeper.resetBoard();
@@ -130,4 +129,10 @@ public class DrawMinesweeperPane extends JPanel {
     		}
     	}
     }
+	public static void zoom(int[] indexFromPos, double preciseWheelRotation) {
+		// TODO Auto-generated method stub
+		// Find a way to zoom in by subtracting outlying boxes that aren't inside a window
+		// make a var called window, which is smaller dispBoard
+		
+	}
 }
